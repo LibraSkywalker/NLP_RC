@@ -26,7 +26,7 @@ def counts():
 					answer = [words[-3]]
 		 			query = words[1:-3]
 				for token in document + query + answer:
-					counter[token] += 1
+					counter[token.lower()] += 1
 				document = []
 			else:
 				document += words[1:-1]
@@ -54,9 +54,9 @@ def tokenize(index, word):
 				else:
 					answer = [words[-3]]
 		 			query = words[1:-3]
-		 		document = map(lambda x : index[x],document)
-		 		query = map(lambda x : index[x],query)
-		 		answer = map(lambda x : index[x],answer)
+		 		document = map(lambda x : index[x.lower()],document)
+		 		query = map(lambda x : index[x.lower()],query)
+		 		answer = map(lambda x : index[x.lower()],answer)
 		 		example = tf.train.Example(
 					features = tf.train.Features(
 			 			feature = {
@@ -76,7 +76,7 @@ def tokenize(index, word):
 def main():
   counter = counts()
   print('num words',len(counter))
-  word, _ = zip(*counter.most_common())
+  word = sorted(counts, key=counts.get, reverse=True)
   index = {token: i for i, token in enumerate(word)}
   tokenize(index, word)
   print('DONE')

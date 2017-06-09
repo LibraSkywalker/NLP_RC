@@ -224,7 +224,7 @@ def main():
 					f = open("./result.txt", 'w')  
 					counter = counts()
 					print('num words',len(counter))
-					word, _ = zip(*counter.most_common())
+					word = sorted(counts, key=counts.get, reverse=True)
 					while not coord.should_stop():
 						ans = sess.run(prediction)
 						step += 1
