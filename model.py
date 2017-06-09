@@ -75,7 +75,7 @@ def read_records(index=2):
 	query = sparse_ops.serialize_sparse(features['query'])
 	answer = features['answer']
 
-	if FLAGS.predict:
+	if FLAGS.training:
 		document_batch_serialized, query_batch_serialized, answer_batch = tf.train.shuffle_batch(
 			[document, query, answer], batch_size=FLAGS.batch_size,
 			capacity=2000,
@@ -161,7 +161,7 @@ def train(y_hat, regularizer, document, doc_weight, answer):
 	global_step = tf.Variable(0, name="global_step", trainable=False)
 
 	accuracy = tf.reduce_mean(tf.to_float(tf.equal(tf.argmax(y_hat, 1), answer))) 
-	prediction = (document,tf.to_int32(tf.argmax(y_hat, 1)))
+	prediction = tf.to_int32(tf.argmax(y_hat, 1))
 
 	optimizer = tf.train.AdamOptimizer()
 	grads_and_vars = optimizer.compute_gradients(loss)
@@ -221,18 +221,14 @@ def main():
 							saver.save(sess, model_path + '/aoa', global_step=step)
 				elif FLAGS.predict:
 					step = 0
-					f = open("./predict", 'w')  
+					f = open("./result.txt", 'w')  
 					counter = counts()
 					print('num words',len(counter))
 					word, _ = zip(*counter.most_common())
 					while not coord.should_stop():
-						result = sess.run(prediction)
-						doc,ans = result
+						ans = sess.run(prediction)
 						step += 1
 						print(step)
-						for id in doc[0] :
-							print>>f,word[int(id)],' ',
-						print >> f
 						for id in ans :
 							print>>f,word[int(id)]
 				else:
