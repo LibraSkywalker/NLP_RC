@@ -10,7 +10,7 @@ from util import softmax, orthogonal_initializer
 
 flags = tf.app.flags
 FLAGS = flags.FLAGS
-flags.DEFINE_integer('vocab_size', 62510, 'Vocabulary size')
+flags.DEFINE_integer('vocab_size', 53063, 'Vocabulary size')
 flags.DEFINE_integer('embedding_size', 384, 'Embedding dimension')
 flags.DEFINE_integer('hidden_size', 256, 'Hidden units')
 flags.DEFINE_integer('batch_size', 32, 'Batch size')
@@ -178,7 +178,7 @@ def main():
 	elif FLAGS.predict:
 		dataset = tf.placeholder_with_default(1,[])
 	else:
-		dataset = tf.placeholder_with_default(2,[])
+		dataset = tf.placeholder_with_default(0,[])
 
 	document_batch, document_weights, query_batch, query_weights, answer_batch = read_records(dataset)
 
@@ -224,7 +224,7 @@ def main():
 					f = open("./result.txt", 'w')  
 					counter = counts()
 					print('num words',len(counter))
-					word = sorted(counts, key=counts.get, reverse=True)
+					word = sorted(counter, key=counter.get, reverse=True)
 					while not coord.should_stop():
 						ans = sess.run(prediction)
 						step += 1
